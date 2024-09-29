@@ -13,88 +13,17 @@ permissions:
   pull-requests: write
 
 jobs:
-  full:
-    strategy:
-      fail-fast: false
-      matrix:
-        arch: ["X64", "ARM64"]
-        mode: ["release", "debug"]
-    container: "fedora:40"
-    runs-on: [self-hosted, "${{ matrix.arch }}"]
-    steps:
-      - name: Check out repository code
-        uses: actions/checkout@v4
-      - name: Install dependencies (Fedora)
-        run: |
-          sudo dnf --disablerepo=* --enablerepo=fedora,updates --setopt=install_weak_deps=False -y install \
-            bison \
-            bpftool \
-            clang \
-            clang-tools-extra \
-            cmake \
-            flex \
-            libcmocka-devel \
-            doxygen \
-            git \
-            jq \
-            lcov \
-            libasan \
-            libbpf-devel \
-            libnl3-devel \
-            libubsan \
-            python3-breathe \
-            python3-furo \
-            python3-linuxdoc \
-            python3-sphinx \
-            pkgconf
-      - name: Configure build
-        run: cmake -S $GITHUB_WORKSPACE -B $GITHUB_WORKSPACE/build -DCMAKE_BUILD_TYPE=${{ matrix.mode }}
-      - name: Build
-        run: make -C $GITHUB_WORKSPACE/build
-      - name: Run unit tests
-        run: make -C $GITHUB_WORKSPACE/build test
-      - name: Coverage
-        run: make -C $GITHUB_WORKSPACE/build coverage
-      - name: Check style
-        run: make -C $GITHUB_WORKSPACE/build check
-      - name: Generate documentation
-        run: make -C $GITHUB_WORKSPACE/build doc
-
   build:
     strategy:
       fail-fast: false
       matrix:
-        image: ["fedora:39", "ubuntu:24.04"]
+        image: ["ubuntu:24.04"]
         arch: ["X64", "ARM64"]
     container: ${{ matrix.image }}
     runs-on: [self-hosted, "${{ matrix.arch }}"]
     steps:
       - name: Check out repository code
         uses: actions/checkout@v4
-      - name: Install dependencies (Fedora)
-        if: matrix.image == 'fedora:39'
-        run: |
-          sudo dnf --disablerepo=* --enablerepo=fedora,updates --setopt=install_weak_deps=False -y install \
-            bison \
-            bpftool \
-            clang \
-            clang-tools-extra \
-            cmake \
-            doxygen \
-            flex \
-            git \
-            jq \
-            lcov \
-            libasan \
-            libbpf-devel \
-            libcmocka-devel \
-            libnl3-devel \
-            libubsan \
-            python3-breathe \
-            python3-furo \
-            python3-linuxdoc \
-            python3-sphinx \
-            pkgconf
       - name: Install dependencies (Ubuntu)
         if: matrix.image == 'ubuntu:24.04'
         run: |
