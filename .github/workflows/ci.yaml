@@ -14,7 +14,7 @@ permissions:
 
 jobs:
   full:
-    if: github.repository == 'facebook/bpfilter'
+    if: github.repository == 'RelicFrog/bpfilter'
     strategy:
       fail-fast: false
       matrix:
@@ -56,19 +56,13 @@ jobs:
         run: make -C $GITHUB_WORKSPACE/build test
       - name: Coverage
         run: make -C $GITHUB_WORKSPACE/build coverage
-      - name: Upload coverage report to Codecov
-        uses: codecov/codecov-action@v3
-        with:
-          files: build/doc/lcov.out
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       - name: Check style
         run: make -C $GITHUB_WORKSPACE/build check
       - name: Generate documentation
         run: make -C $GITHUB_WORKSPACE/build doc
 
   build:
-    if: github.repository == 'facebook/bpfilter'
+    if: github.repository == 'RelicFrog/bpfilter'
     strategy:
       fail-fast: false
       matrix:
