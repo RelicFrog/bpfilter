@@ -3,24 +3,23 @@ name: CI
 on:
   push:
     branches:
-      - main
-  pull_request:
-    branches:
-      - main
+      - "**"
 
 permissions:
   checks: write
   pull-requests: write
 
 jobs:
-  build:
+  full:
     strategy:
       fail-fast: false
       matrix:
-        image: ["ubuntu:24.04"]
-        arch: ["X64", "ARM64"]
-    container: ${{ matrix.image }}
-    runs-on: [self-hosted, "${{ matrix.arch }}"]
+        # This forces GitHub to print "ubuntu:24.04, x64" in the job name.
+        image: [ "ubuntu:24.04" ]
+        arch: [ "X64", "ARM64" ]
+        mode: ["release"]
+    container: "${{ matrix.system }}"
+    runs-on: ["ubuntu-latest"]
     steps:
       - name: Check out repository code
         uses: actions/checkout@v4
@@ -50,8 +49,10 @@ jobs:
             pkgconf && \
           pip3 install --break-system-packages linuxdoc
       - name: Configure build
-        run: cmake -S $GITHUB_WORKSPACE -B $GITHUB_WORKSPACE/build
+        run: cmake -S $GITHUB_WORKSPACE -B $GITHUB_WORKSPACE/build -DCMAKE_BUILD_TYPE=${{ matrix.mode }}
       - name: Build
         run: make -C $GITHUB_WORKSPACE/build
-      - name: Run unit tests
-        run: make -C $GITHUB_WORKSPACE/build test
+      - name: Check style
+        run: make -C $GITHUB_WORKSPACE/build check
+      - name: Generate documentation
+        run: make -C $GITHUB_WORKSPACE/build doc
