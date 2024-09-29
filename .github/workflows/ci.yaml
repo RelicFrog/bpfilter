@@ -14,7 +14,6 @@ permissions:
 
 jobs:
   full:
-    if: github.repository == 'RelicFrog/bpfilter'
     strategy:
       fail-fast: false
       matrix:
@@ -62,7 +61,6 @@ jobs:
         run: make -C $GITHUB_WORKSPACE/build doc
 
   build:
-    if: github.repository == 'RelicFrog/bpfilter'
     strategy:
       fail-fast: false
       matrix:
