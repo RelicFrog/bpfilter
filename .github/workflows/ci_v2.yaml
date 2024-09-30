@@ -18,7 +18,7 @@ jobs:
       fail-fast: false
       matrix:
         system: ["ubuntu:24.04"]
-        arch: ["ARM64"]
+        arch: ["arm64"]
         mode: ["release"]
     container: "${{ matrix.system }}"
     runs-on: ["ubuntu-latest"]
@@ -56,7 +56,7 @@ jobs:
               libtool && \
           pip3 install --break-system-packages linuxdoc
       - name: Prepare Build (core)
-        run: cmake -S $GITHUB_WORKSPACE -B $GITHUB_WORKSPACE/build -DCMAKE_BUILD_TYPE=${{ matrix.mode }}
+        run: cmake -S $GITHUB_WORKSPACE -B $GITHUB_WORKSPACE/build -DCMAKE_BUILD_TYPE=${{ matrix.mode }} -DCMAKE_C_FLAGS="-D__KERNEL__ -D__LINUX_ARM_ARCH__=8"
       - name: Build BPFilter
         run: make -C $GITHUB_WORKSPACE/build
       - name: Build NFTables
