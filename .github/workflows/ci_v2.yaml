@@ -68,7 +68,7 @@ jobs:
       - name: Prepare Build Artifacts (bpfilter-core, bpfilter-nftables)
         run: |
           tar -czvf ${{ matrix.mode }}-bpfilter-core-${{ matrix.arch }}.tar.gz ./build/output/* && \
-          tar -czvf ${{ matrix.mode }}-bpfilter-nftables-${{ matrix.arch }}.tar.gz ./build/output/tools/install/*
+          tar -czvf ${{ matrix.mode }}-bpfilter-nftables-${{ matrix.arch }}.tar.gz ./build/tools/install/*
       - name: Upload Core Artifacts
         uses: actions/upload-artifact@v3
         with:

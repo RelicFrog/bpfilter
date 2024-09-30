@@ -109,7 +109,7 @@ static int _bf_ensure_runtime_dir(void)
  *
  * @param path Path to the context file.
  * @return This function will return:
- *         - 1 if the runtime context has been succesfully restored from the disk.
+ *         - 1 if the runtime context has been successfully restored from the disk.
  *         - 0 if no serialized context has been found on the disk.
  *         - < 0 on error.
  */
