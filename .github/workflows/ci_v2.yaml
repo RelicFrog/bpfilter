@@ -1,4 +1,4 @@
-name: CI
+name: Fork-specific CI
 
 on:
   push:
@@ -14,44 +14,44 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # This forces GitHub to print "ubuntu:24.04, x64" in the job name.
-        image: [ "ubuntu:24.04" ]
-        arch: [ "X64", "ARM64" ]
-        mode: ["release"]
+        # This forces GitHub to print "fedora:40, x64" in the job name.
+        system: ["fedora:40"]
+        arch: ["X64"]
+        mode: ["release", "debug"]
     container: "${{ matrix.system }}"
     runs-on: ["ubuntu-latest"]
     steps:
       - name: Check out repository code
         uses: actions/checkout@v4
-      - name: Install dependencies (Ubuntu)
-        if: matrix.image == 'ubuntu:24.04'
+      - name: Install dependencies (Fedora)
         run: |
-          sudo apt-get update
-          DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC sudo apt-get -y install \
+          sudo dnf --disablerepo=* --enablerepo=fedora,updates --setopt=install_weak_deps=False -y install \
             bison \
+            bpftool \
             clang \
-            clang-format \
-            clang-tidy \
+            clang-tools-extra \
             cmake \
             doxygen \
             flex \
-            furo \
             git \
             jq \
             lcov \
-            libbpf-dev \
-            libcmocka-dev \
-            libnl-3-dev \
-            linux-tools-common \
+            libasan \
+            libbpf-devel \
+            libcmocka-devel \
+            libnl3-devel \
+            libubsan \
             python3-breathe \
-            python3-pip \
+            python3-furo \
+            python3-linuxdoc \
             python3-sphinx \
-            pkgconf && \
-          pip3 install --break-system-packages linuxdoc
+            pkgconf
       - name: Configure build
         run: cmake -S $GITHUB_WORKSPACE -B $GITHUB_WORKSPACE/build -DCMAKE_BUILD_TYPE=${{ matrix.mode }}
       - name: Build
         run: make -C $GITHUB_WORKSPACE/build
+      # Skip unit tests, the GitHub-hosted runners' kernel is too old.
+      # Skip coverage as unit tests are not run.
       - name: Check style
         run: make -C $GITHUB_WORKSPACE/build check
       - name: Generate documentation
