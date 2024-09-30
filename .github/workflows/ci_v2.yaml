@@ -59,8 +59,8 @@ jobs:
         run: cmake -S $GITHUB_WORKSPACE -B $GITHUB_WORKSPACE/build -DCMAKE_BUILD_TYPE=${{ matrix.mode }}
       - name: Build BPFilter
         run: make -C $GITHUB_WORKSPACE/build
-      #- name: Build NFTables
-      #  run: make -C $GITHUB_WORKSPACE/build nftables
+      - name: Build NFTables
+        run: make -C $GITHUB_WORKSPACE/build nftables
       - name: Check Style
         run: make -C $GITHUB_WORKSPACE/build check
       - name: Generate Documentation
