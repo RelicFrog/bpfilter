@@ -44,7 +44,7 @@ jobs:
             gmp-devel \
             libedit-devel \
             libmnl-devel \
-            libnftnl-devel  \
+            libnftnl-devel \
             libtool \
             libasan \
             libbpf-devel \
@@ -55,7 +55,6 @@ jobs:
             python3-furo \
             python3-linuxdoc \
             python3-sphinx
-
       - name: Prepare Build (core)
         run: cmake -S $GITHUB_WORKSPACE -B $GITHUB_WORKSPACE/build -DCMAKE_BUILD_TYPE=${{ matrix.mode }}
       - name: Build BPFilter
