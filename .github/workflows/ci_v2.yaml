@@ -38,6 +38,14 @@ jobs:
             git \
             jq \
             lcov \
+            pkgconf \ 
+            autoconf \
+            automake \
+            gmp-devel \
+            libedit-devel \
+            libmnl-devel \
+            libnftnl-devel  \
+            libtool \
             libasan \
             libbpf-devel \
             libcmocka-devel \
@@ -46,8 +54,8 @@ jobs:
             python3-breathe \
             python3-furo \
             python3-linuxdoc \
-            python3-sphinx \
-            pkgconf
+            python3-sphinx
+
       - name: Prepare Build (core)
         run: cmake -S $GITHUB_WORKSPACE -B $GITHUB_WORKSPACE/build -DCMAKE_BUILD_TYPE=${{ matrix.mode }}
       - name: Build BPFilter
