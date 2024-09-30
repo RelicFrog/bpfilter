@@ -61,15 +61,21 @@ jobs:
         run: make -C $GITHUB_WORKSPACE/build
       - name: Build NFTables
         run: make -C $GITHUB_WORKSPACE/build nftables
-      - name: Prepare Build Artifacts
-        run: |
-          tar -czvf ${{ matrix.mode }}-build-${{ matrix.arch }}.tar.gz ./build/*
-      - name: Upload Artifacts
-        uses: actions/upload-artifact@v3
-        with:
-          name: bpfilter-${{ matrix.arch }}-build
-          path: ${{ matrix.mode }}-build-${{ matrix.arch }}.tar.gz
       - name: Check Style
         run: make -C $GITHUB_WORKSPACE/build check
       - name: Generate Documentation
         run: make -C $GITHUB_WORKSPACE/build doc
+      - name: Prepare Build Artifacts (bpfilter-core, bpfilter-nftables)
+        run: |
+          tar -czvf ${{ matrix.mode }}-bpfilter-core-${{ matrix.arch }}.tar.gz ./build/output/* && \
+          tar -czvf ${{ matrix.mode }}-bpfilter-nftables-${{ matrix.arch }}.tar.gz ./build/output/tools/install/*
+      - name: Upload Core Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: bpfilter-${{ matrix.arch }}-${{ matrix.mode }}
+          path: ${{ matrix.mode }}-bpfilter-core-${{ matrix.arch }}.tar.gz
+      - name: Upload NFTables Install-Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: bpfilter-nftables-${{ matrix.arch }}-${{ matrix.mode }}
+          path: ${{ matrix.mode }}-bpfilter-nftables-${{ matrix.arch }}.tar.gz
