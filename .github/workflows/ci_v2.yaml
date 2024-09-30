@@ -1,9 +1,12 @@
-name: Fork-specific CI
+name: CI-v2
 
 on:
   push:
     branches:
-      - "**"
+      - main
+  pull_request:
+    branches:
+      - main
 
 permissions:
   checks: write
@@ -14,16 +17,15 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # This forces GitHub to print "fedora:40, x64" in the job name.
         system: ["fedora:40"]
-        arch: ["X64"]
-        mode: ["release", "debug"]
+        arch: ["X64", "ARM64"]
+        mode: ["release"]
     container: "${{ matrix.system }}"
     runs-on: ["ubuntu-latest"]
     steps:
-      - name: Check out repository code
+      - name: CheckOut SCM Code
         uses: actions/checkout@v4
-      - name: Install dependencies (Fedora)
+      - name: Install Dependencies (Fedora)
         run: |
           sudo dnf --disablerepo=* --enablerepo=fedora,updates --setopt=install_weak_deps=False -y install \
             bison \
@@ -46,13 +48,13 @@ jobs:
             python3-linuxdoc \
             python3-sphinx \
             pkgconf
-      - name: Configure build
+      - name: Prepare Build (core)
         run: cmake -S $GITHUB_WORKSPACE -B $GITHUB_WORKSPACE/build -DCMAKE_BUILD_TYPE=${{ matrix.mode }}
-      - name: Build
+      - name: Build BPFilter
         run: make -C $GITHUB_WORKSPACE/build
-      # Skip unit tests, the GitHub-hosted runners' kernel is too old.
-      # Skip coverage as unit tests are not run.
-      - name: Check style
+      - name: Build NFTables
+        run: make -C $GITHUB_WORKSPACE/build nftables
+      - name: Check Style
         run: make -C $GITHUB_WORKSPACE/build check
-      - name: Generate documentation
+      - name: Generate Documentation
         run: make -C $GITHUB_WORKSPACE/build doc
