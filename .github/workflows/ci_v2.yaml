@@ -17,7 +17,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        system: ["fedora:40"]
+        system: ["ubuntu:24.04"]
         arch: ["ARM64"]
         mode: ["release"]
     container: "${{ matrix.system }}"
@@ -25,29 +25,35 @@ jobs:
     steps:
       - name: CheckOut SCM Code
         uses: actions/checkout@v4
-      - name: Install Dependencies (Fedora)
+      - name: Install Dependencies (Ubuntu)
         run: |
-          sudo dnf --disablerepo=* --enablerepo=fedora,updates --setopt=install_weak_deps=False -y install \
-            bison \
-            bpftool \
-            clang \
-            clang-tools-extra \
-            cmake \
-            flex \
-            libcmocka-devel \
-            doxygen \
-            git \
-            jq \
-            lcov \
-            libasan \
-            libbpf-devel \
-            libnl3-devel \
-            libubsan \
-            python3-breathe \
-            python3-furo \
-            python3-linuxdoc \
-            python3-sphinx \
-            pkgconf
+          sudo apt-get update && \
+              DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC sudo apt-get -y install \
+                autoconf \
+                bison \
+                clang \
+                clang-format \
+                clang-tidy \
+                cmake \
+                doxygen \
+                flex \
+                furo \
+                git \
+                jq \
+                lcov \
+                libbpf-dev \
+                libcmocka-dev \
+                libnl-3-dev \
+                linux-tools-common \
+                python3-breathe \
+                python3-pip \
+                python3-sphinx \
+                pkgconf \
+                libedit-dev \
+                libgmp-dev \
+                libmnl-dev \
+                libnftnl-dev \
+                libtool
       - name: Prepare Build (core)
         run: cmake -S $GITHUB_WORKSPACE -B $GITHUB_WORKSPACE/build -DCMAKE_BUILD_TYPE=${{ matrix.mode }}
       - name: Build BPFilter
